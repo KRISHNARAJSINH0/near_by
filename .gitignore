@@ -1,0 +1,24 @@
+# Next.js build and cache outputs
+/client/.next/
+/client/out/
+/client/build/
+
+# Dependency folders
+node_modules/
+/client/node_modules/
+/server/node_modules/
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+/server/.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Empty temporary folder
+near_by/
