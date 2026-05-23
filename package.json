@@ -1,0 +1,19 @@
+{
+  "name": "geoteam-proximity-platform",
+  "version": "1.0.0",
+  "description": "GeoTeam root orchestrator for full-stack nearby team finder platform",
+  "main": "server/server.js",
+  "scripts": {
+    "dev:server": "npm start --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "npx concurrently --kill-others-on-fail \"npm run dev:server\" \"npm run dev:client\""
+  },
+  "keywords": [
+    "geoteam",
+    "proximity-finder",
+    "leaflet",
+    "websockets"
+  ],
+  "author": "Antigravity AI",
+  "license": "ISC"
+}
