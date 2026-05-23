@@ -26,6 +26,9 @@ export const LocationProvider = ({ children }) => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Do not request browser GPS if the user is in simulated/mock mode
+    if (isMockLocation) return;
+
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser.');
       setLoading(false);
@@ -34,23 +37,25 @@ export const LocationProvider = ({ children }) => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // If user has not enabled mock location, use real location
-        if (!isMockLocation) {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-          setActivePresetName('Your Real Device GPS');
-        }
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+        setActivePresetName('Your Real Device GPS');
+        setError(null);
         setLoading(false);
       },
       (err) => {
-        console.warn('Geolocation access denied. Falling back to Mumbai coordinates.');
+        console.warn('Geolocation access denied or timed out. Falling back to Mumbai coordinates.');
         setError(err.message);
-        // Stick to Mumbai default
+        setLocation({
+          latitude: 19.0760,
+          longitude: 72.8777
+        });
+        setActivePresetName('Mumbai Center (default)');
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
     );
   }, [isMockLocation]);
 
@@ -61,6 +66,7 @@ export const LocationProvider = ({ children }) => {
     });
     setIsMockLocation(true);
     setActivePresetName(name);
+    setError(null);
   };
 
   const toggleMockMode = (active) => {
@@ -75,12 +81,20 @@ export const LocationProvider = ({ children }) => {
             longitude: position.coords.longitude
           });
           setActivePresetName('Your Real Device GPS');
+          setError(null);
           setLoading(false);
         },
         (err) => {
+          console.warn('Geolocation fallback failed:', err.message);
           setError(err.message);
+          setLocation({
+            latitude: 19.0760,
+            longitude: 72.8777
+          });
+          setActivePresetName('Mumbai Center (default)');
           setLoading(false);
-        }
+        },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
       );
     }
   };

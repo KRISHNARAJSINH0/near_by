@@ -33,8 +33,10 @@ export default function Dashboard() {
     try {
       setLoading(true);
       
-      // 1. Fetch nearby polls count (using default 10km radius)
-      const nearbyRes = await axios.get(`${API_URL}/polls/nearby?radius=10`);
+      // 1. Fetch nearby polls count (using default 10km radius and active coordinates)
+      const nearbyRes = await axios.get(
+        `${API_URL}/polls/nearby?radius=10&latitude=${location.latitude}&longitude=${location.longitude}`
+      );
       setNearbyCount(nearbyRes.data.length);
 
       // 2. Fetch joined chatrooms (active teams)

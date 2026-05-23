@@ -24,8 +24,8 @@ exports.createPoll = async (req, res) => {
       return res.status(400).json({ message: 'Title, description, and category are required.' });
     }
 
-    const pollLat = latitude !== undefined ? parseFloat(latitude) : req.user.latitude;
-    const pollLng = longitude !== undefined ? parseFloat(longitude) : req.user.longitude;
+    const pollLat = (latitude !== undefined && latitude !== null) ? parseFloat(latitude) : (req.user && req.user.latitude !== undefined && req.user.latitude !== null ? parseFloat(req.user.latitude) : 19.0760);
+    const pollLng = (longitude !== undefined && longitude !== null) ? parseFloat(longitude) : (req.user && req.user.longitude !== undefined && req.user.longitude !== null ? parseFloat(req.user.longitude) : 72.8777);
 
     const newPoll = {
       title,
@@ -75,8 +75,8 @@ exports.createPoll = async (req, res) => {
 exports.getNearbyPolls = async (req, res) => {
   try {
     // Current user's location or request coordinates
-    const userLat = req.query.latitude !== undefined ? parseFloat(req.query.latitude) : req.user.latitude;
-    const userLng = req.query.longitude !== undefined ? parseFloat(req.query.longitude) : req.user.longitude;
+    const userLat = (req.query.latitude !== undefined && req.query.latitude !== null) ? parseFloat(req.query.latitude) : (req.user && req.user.latitude !== undefined && req.user.latitude !== null ? parseFloat(req.user.latitude) : 19.0760);
+    const userLng = (req.query.longitude !== undefined && req.query.longitude !== null) ? parseFloat(req.query.longitude) : (req.user && req.user.longitude !== undefined && req.user.longitude !== null ? parseFloat(req.user.longitude) : 72.8777);
     const radius = req.query.radius ? parseFloat(req.query.radius) : 10; // Default: 10km
 
     // Approximate bounding box search for Firestore
@@ -162,8 +162,8 @@ exports.getPollDetails = async (req, res) => {
     }
 
     // Calculate distance from logged in user
-    const userLat = req.user.latitude;
-    const userLng = req.user.longitude;
+    const userLat = (req.user && req.user.latitude !== undefined && req.user.latitude !== null) ? parseFloat(req.user.latitude) : 19.0760;
+    const userLng = (req.user && req.user.longitude !== undefined && req.user.longitude !== null) ? parseFloat(req.user.longitude) : 72.8777;
     const distance = calculateDistance(userLat, userLng, pollData.latitude, pollData.longitude);
 
     return res.status(200).json({
